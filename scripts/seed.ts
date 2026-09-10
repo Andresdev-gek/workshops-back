@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10;
 
-const users = [
+const loginUsers = [
   {
     email: 'ana.gomez@example.com',
     password: 'Password123!',
@@ -19,6 +19,15 @@ const users = [
     name: 'Luis Rojas',
   },
 ];
+
+const dummyUsers = [
+  { email: 'demo.user1@example.com', password: 'Password123!', name: 'Demo User 1' },
+  { email: 'demo.user2@example.com', password: 'Password123!', name: 'Demo User 2' },
+  { email: 'demo.user3@example.com', password: 'Password123!', name: 'Demo User 3' },
+  { email: 'demo.user4@example.com', password: 'Password123!', name: 'Demo User 4' },
+];
+
+const users = [...loginUsers, ...dummyUsers];
 
 const workshops = [
   {
@@ -147,8 +156,8 @@ async function main(): Promise<void> {
       console.log(`Seeded workshop: ${workshop.name}`);
     }
 
-    const seededUsers = await postgres.user.findMany({
-      where: { email: { in: users.map((u) => u.email) } },
+    const seededDummyUsers = await postgres.user.findMany({
+      where: { email: { in: dummyUsers.map((u) => u.email) } },
     });
 
     const seededWorkshops = await mongo.workshop.findMany({
@@ -159,25 +168,27 @@ async function main(): Promise<void> {
     const angular = seededWorkshops.find((w) => w.name === 'Angular');
 
     if (scala && angular) {
-      for (const user of seededUsers) {
-        const scalaExists = await mongo.reservation.findUnique({
+      for (const user of seededDummyUsers.slice(0, 2)) {
+        const exists = await mongo.reservation.findUnique({
           where: {
             userId_workshopId: { userId: user.id, workshopId: scala.id },
           },
         });
-        if (!scalaExists) {
+        if (!exists) {
           await mongo.reservation.create({
             data: { userId: user.id, workshopId: scala.id },
           });
           console.log(`Seeded reservation: ${user.email} -> Scala`);
         }
+      }
 
-        const angularExists = await mongo.reservation.findUnique({
+      for (const user of seededDummyUsers) {
+        const exists = await mongo.reservation.findUnique({
           where: {
             userId_workshopId: { userId: user.id, workshopId: angular.id },
           },
         });
-        if (!angularExists) {
+        if (!exists) {
           await mongo.reservation.create({
             data: { userId: user.id, workshopId: angular.id },
           });
