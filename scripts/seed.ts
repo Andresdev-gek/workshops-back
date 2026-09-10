@@ -161,13 +161,14 @@ async function main(): Promise<void> {
     });
 
     const seededWorkshops = await mongo.workshop.findMany({
-      where: { name: { in: ['Scala', 'Angular'] } },
+      where: { name: { in: ['Scala', 'Angular', 'Spring Boot'] } },
     });
 
     const scala = seededWorkshops.find((w) => w.name === 'Scala');
     const angular = seededWorkshops.find((w) => w.name === 'Angular');
+    const springBoot = seededWorkshops.find((w) => w.name === 'Spring Boot');
 
-    if (scala && angular) {
+    if (scala && angular && springBoot) {
       for (const user of seededDummyUsers.slice(0, 2)) {
         const exists = await mongo.reservation.findUnique({
           where: {
@@ -193,6 +194,20 @@ async function main(): Promise<void> {
             data: { userId: user.id, workshopId: angular.id },
           });
           console.log(`Seeded reservation: ${user.email} -> Angular`);
+        }
+      }
+
+      for (const user of seededDummyUsers) {
+        const exists = await mongo.reservation.findUnique({
+          where: {
+            userId_workshopId: { userId: user.id, workshopId: springBoot.id },
+          },
+        });
+        if (!exists) {
+          await mongo.reservation.create({
+            data: { userId: user.id, workshopId: springBoot.id },
+          });
+          console.log(`Seeded reservation: ${user.email} -> Spring Boot`);
         }
       }
     }
