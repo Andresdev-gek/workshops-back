@@ -1,0 +1,30 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../generated/mongo-client"
+}
+
+model Workshop {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String
+  imageUrl    String
+  capacity    Int
+  createdAt   DateTime @default(now())
+
+  @@map("workshops")
+}
+
+model Reservation {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String
+  workshopId String   @db.ObjectId
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, workshopId])
+  @@map("reservations")
+}

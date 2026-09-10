@@ -1,0 +1,24 @@
+name: Backend CI
+on:
+  push:
+    paths: ["**"]
+  pull_request:
+    paths: ["**"]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npx prisma generate --schema=prisma/postgres/schema.prisma
+      - run: npx prisma generate --schema=prisma/mongodb/schema.prisma
+      - run: npm run build
+      - run: npm test
