@@ -83,8 +83,8 @@ npx prisma generate --schema=prisma/mongodb/schema.prisma
 npx prisma db push --schema=prisma/postgres/schema.prisma
 npx prisma db push --schema=prisma/mongodb/schema.prisma
 
-# Cargar datos iniciales
-npm run seed
+# Cargar datos iniciales (solo en caso de que las bd no esten pobladas previamente)
+npm run seed 
 
 # Levantar en desarrollo
 npm run start:dev
