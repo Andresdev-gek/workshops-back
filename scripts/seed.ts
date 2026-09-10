@@ -18,6 +18,16 @@ const users = [
     password: 'Password123!',
     name: 'Luis Rojas',
   },
+  {
+    email: 'carla.mendez@example.com',
+    password: 'Password123!',
+    name: 'Carla Méndez',
+  },
+  {
+    email: 'diego.torres@example.com',
+    password: 'Password123!',
+    name: 'Diego Torres',
+  },
 ];
 
 const workshops = [
@@ -145,6 +155,50 @@ async function main(): Promise<void> {
         create: workshop,
       });
       console.log(`Seeded workshop: ${workshop.name}`);
+    }
+
+    const seededUsers = await postgres.user.findMany({
+      where: { email: { in: users.map((u) => u.email) } },
+    });
+
+    const seededWorkshops = await mongo.workshop.findMany({
+      where: { name: { in: ['Scala', 'Angular'] } },
+    });
+
+    const scala = seededWorkshops.find((w) => w.name === 'Scala');
+    const angular = seededWorkshops.find((w) => w.name === 'Angular');
+
+    if (scala && angular) {
+      const scalaReservations = seededUsers.slice(0, 2);
+      const angularReservations = seededUsers.slice(0, 4);
+
+      for (const user of scalaReservations) {
+        const exists = await mongo.reservation.findUnique({
+          where: {
+            userId_workshopId: { userId: user.id, workshopId: scala.id },
+          },
+        });
+        if (!exists) {
+          await mongo.reservation.create({
+            data: { userId: user.id, workshopId: scala.id },
+          });
+          console.log(`Seeded reservation: ${user.email} -> Scala`);
+        }
+      }
+
+      for (const user of angularReservations) {
+        const exists = await mongo.reservation.findUnique({
+          where: {
+            userId_workshopId: { userId: user.id, workshopId: angular.id },
+          },
+        });
+        if (!exists) {
+          await mongo.reservation.create({
+            data: { userId: user.id, workshopId: angular.id },
+          });
+          console.log(`Seeded reservation: ${user.email} -> Angular`);
+        }
+      }
     }
 
     console.log('Seed completed successfully.');
