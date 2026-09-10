@@ -18,16 +18,6 @@ const users = [
     password: 'Password123!',
     name: 'Luis Rojas',
   },
-  {
-    email: 'carla.mendez@example.com',
-    password: 'Password123!',
-    name: 'Carla Méndez',
-  },
-  {
-    email: 'diego.torres@example.com',
-    password: 'Password123!',
-    name: 'Diego Torres',
-  },
 ];
 
 const workshops = [
@@ -169,30 +159,25 @@ async function main(): Promise<void> {
     const angular = seededWorkshops.find((w) => w.name === 'Angular');
 
     if (scala && angular) {
-      const scalaReservations = seededUsers.slice(0, 2);
-      const angularReservations = seededUsers.slice(0, 4);
-
-      for (const user of scalaReservations) {
-        const exists = await mongo.reservation.findUnique({
+      for (const user of seededUsers) {
+        const scalaExists = await mongo.reservation.findUnique({
           where: {
             userId_workshopId: { userId: user.id, workshopId: scala.id },
           },
         });
-        if (!exists) {
+        if (!scalaExists) {
           await mongo.reservation.create({
             data: { userId: user.id, workshopId: scala.id },
           });
           console.log(`Seeded reservation: ${user.email} -> Scala`);
         }
-      }
 
-      for (const user of angularReservations) {
-        const exists = await mongo.reservation.findUnique({
+        const angularExists = await mongo.reservation.findUnique({
           where: {
             userId_workshopId: { userId: user.id, workshopId: angular.id },
           },
         });
-        if (!exists) {
+        if (!angularExists) {
           await mongo.reservation.create({
             data: { userId: user.id, workshopId: angular.id },
           });
