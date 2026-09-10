@@ -1,0 +1,158 @@
+{
+  "info": {
+    "_postman_id": "workshops-api-collection",
+    "name": "Workshops API",
+    "description": "Colección de endpoints del backend de reservas de talleres.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ana.gomez@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Autentica un usuario y devuelve el accessToken JWT."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Workshops",
+      "item": [
+        {
+          "name": "List all workshops",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/workshops",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workshops"]
+            },
+            "description": "Devuelve el catálogo completo de talleres con disponibilidad."
+          },
+          "response": []
+        },
+        {
+          "name": "List my workshops",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/workshops/mine",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workshops", "mine"]
+            },
+            "description": "Devuelve los talleres donde el usuario autenticado está inscrito."
+          },
+          "response": []
+        },
+        {
+          "name": "Reserve workshop",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/workshops/{{workshopId}}/reservations",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workshops", "{{workshopId}}", "reservations"]
+            },
+            "description": "Reserva un cupo en el taller indicado. Reemplazar workshopId con el ID real."
+          },
+          "response": []
+        },
+        {
+          "name": "List workshops without token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/workshops",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workshops"]
+            },
+            "description": "Debe devolver 401 Unauthorized."
+          },
+          "response": []
+        },
+        {
+          "name": "List workshops with invalid token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid-token"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/workshops",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workshops"]
+            },
+            "description": "Debe devolver 401 Unauthorized."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workshopId",
+      "value": "REPLACE_WITH_WORKSHOP_ID",
+      "type": "string"
+    }
+  ]
+}

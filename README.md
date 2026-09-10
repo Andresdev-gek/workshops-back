@@ -96,3 +96,33 @@ npm run start:prod
 # Tests
 npm test
 ```
+
+## Colección de Postman
+
+En la raíz del proyecto se encuentra el archivo `workshops-api.postman_collection.json`, que incluye todos los endpoints del backend listos para importar.
+
+**Requests incluidos:**
+
+- `POST /api/auth/login`
+- `GET /api/workshops`
+- `GET /api/workshops/mine`
+- `POST /api/workshops/:id/reservations`
+- `GET /api/workshops` sin token (esperado: 401)
+- `GET /api/workshops` con token inválido (esperado: 401)
+
+**Cómo usarla:**
+
+1. Abrir Postman.
+2. Ir a **File → Import** y seleccionar `workshops-api.postman_collection.json`.
+3. La colección trae las variables `baseUrl`, `accessToken` y `workshopId`.
+4. Ejecutar el request **Login** con uno de los usuarios de prueba.
+5. Copiar el `accessToken` de la respuesta y pegarlo en la variable `accessToken` de la colección.
+6. Ejecutar **List all workshops**, copiar el `id` de algún taller y pegarlo en la variable `workshopId`.
+7. Probar los demás requests.
+
+**Usuarios de prueba:**
+
+| Email | Contraseña |
+|---|---|
+| `ana.gomez@example.com` | `Password123!` |
+| `luis.rojas@example.com` | `Password123!` |
